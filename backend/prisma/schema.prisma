@@ -1,0 +1,54 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model Empresa {
+  id           Int           @id @default(autoincrement())
+  nombre       String
+  usuarios     Usuario[]
+  trabajadores Trabajador[]
+  checklist    Checklist[]
+}
+
+model Usuario {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  password  String
+  rol       String
+  empresaId Int
+  empresa   Empresa  @relation(fields: [empresaId], references: [id])
+}
+
+model Trabajador {
+  id        Int     @id @default(autoincrement())
+  nombre    String
+  cargo     String
+  area      String
+  riesgo    String
+  empresaId Int
+  empresa   Empresa @relation(fields: [empresaId], references: [id])
+}
+
+model Checklist {
+  id        Int     @id @default(autoincrement())
+  pregunta  String
+  cumple    Boolean @default(false)
+  empresaId Int
+  empresa   Empresa @relation(fields: [empresaId], references: [id])
+}
+model Evidencia {
+  id          Int      @id @default(autoincrement())
+  archivo     String
+  observacion String?
+  fecha       DateTime @default(now())
+
+  checklistId Int
+  checklist   Checklist @relation(fields: [checklistId], references: [id])
+
+  empresaId   Int
+}
