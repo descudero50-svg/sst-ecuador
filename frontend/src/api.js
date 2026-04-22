@@ -1,39 +1,39 @@
-const API_URL = "http://localhost:3000";
+const API_URL = "https://sst-ecuador.onrender.com";
 
-// 🔐 Fetch automático con token
-export async function apiFetch(endpoint, options = {}) {
-  try {
-    const token = localStorage.getItem("token");
+// LOGIN
+export async function login(email, password) {
+  const res = await fetch(`${API_URL}/login`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ email, password }),
+  });
 
-    const res = await fetch(API_URL + endpoint, {
-      ...options,
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: token ? "Bearer " + token : "",
-        ...(options.headers || {})
-      }
-    });
+  return res.json();
+}
 
-    // 🔴 Si no autorizado → cerrar sesión
-    if (res.status === 401 || res.status === 403) {
-      console.warn("Sesión expirada o no autorizada");
-      localStorage.clear();
-      window.location.reload();
-      return [];
-    }
+// OBTENER CHECKLIST
+export async function getChecklist(token) {
+  const res = await fetch(`${API_URL}/checklist`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
 
-    // 🛡️ Evita error "no valid JSON"
-    const text = await res.text();
+  return res.json();
+}
 
-    try {
-      return JSON.parse(text);
-    } catch {
-      console.error("Respuesta no es JSON:", text);
-      return [];
-    }
+// CREAR CHECKLIST
+export async function crearChecklist(data, token) {
+  const res = await fetch(`${API_URL}/checklist`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(data),
+  });
 
-  } catch (error) {
-    console.error("Error en apiFetch:", error);
-    return [];
-  }
+  return res.json();
 }
