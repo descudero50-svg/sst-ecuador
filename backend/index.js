@@ -47,9 +47,13 @@ app.post("/login", async (req, res) => {
       token: "token-demo",
       user,
     });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Error en login" });
+  } } catch (error) {
+  console.error("🔥 ERROR LOGIN:", error);
+  res.status(500).json({
+    error: "Error en login",
+    detalle: error.message
+  });
+}
   }
 });
 
