@@ -51,6 +51,18 @@ app.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
 
+    // 🔹 crear usuario automáticamente si no existe
+    await prisma.usuario.upsert({
+      where: { email: "admin@test.com" },
+      update: {},
+      create: {
+        email: "admin@test.com",
+        password: "123456",
+        rol: "admin",
+        empresaId: 1,
+      },
+    });
+
     const user = await prisma.usuario.findUnique({
       where: { email },
     });
