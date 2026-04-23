@@ -111,5 +111,21 @@ const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, async () => {
   console.log("Servidor corriendo en puerto " + PORT);
-  await crearUsuarioInicial();
+
+  try {
+    await prisma.usuario.upsert({
+      where: { email: "admin@test.com" },
+      update: {},
+      create: {
+        email: "admin@test.com",
+        password: "123456",
+        rol: "admin",
+        empresaId: 1,
+      },
+    });
+
+    console.log("✅ Usuario creado o ya existe");
+  } catch (error) {
+    console.error("Error creando usuario:", error);
+  }
 });
