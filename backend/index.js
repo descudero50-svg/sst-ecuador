@@ -80,3 +80,110 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log("Servidor corriendo en puerto " + PORT);
 });
+app.get("/crear-admin", async (req, res) => {
+  try {
+    const usuario = await prisma.usuario.create({
+      data: {
+        email: "admin@test.com",
+        password: "123456"
+      }
+    });
+
+    res.json({
+      mensaje: "Usuario creado",
+      usuario
+    });
+
+  } catch (error) {
+    console.error(error);
+    res.json({
+      error: "Ya existe o fallo",
+      detalle: error.message
+    });
+  }
+});app.get("/crear-admin", async (req, res) => {
+  try {
+    const usuario = await prisma.usuario.create({
+      data: {
+        email: "admin@test.com",
+        password: "123456"
+      }
+    });
+
+    res.json({
+      mensaje: "Usuario creado",
+      usuario
+    });
+
+  } catch (error) {
+    console.error(error);
+    res.json({
+      error: "Ya existe o fallo",
+      detalle: error.message
+    });
+  }
+});app.get("/crear-admin", async (req, res) => {
+  try {
+    const usuario = await prisma.usuario.create({
+      data: {
+        email: "admin@test.com",
+        password: "123456"
+      }
+    });
+
+    res.json({
+      mensaje: "Usuario creado",
+      usuario
+    });
+
+  } catch (error) {
+    console.error(error);
+    res.json({
+      error: "Ya existe o fallo",
+      detalle: error.message
+    });
+  }
+});
+app.get("/crear-admin", async (req, res) => {
+  try {
+    const usuario = await prisma.usuario.create({
+      data: {
+        email: "admin@test.com",
+        password: "123456"
+      }
+    });
+
+    res.json({
+      mensaje: "Usuario creado",
+      usuario
+    });
+
+  } catch (error) {
+    console.error(error);
+    res.json({
+      error: "Ya existe o fallo",
+      detalle: error.message
+    });
+  }
+});app.get("/crear-admin", async (req, res) => {
+  try {
+    const usuario = await prisma.usuario.create({
+      data: {
+        email: "admin@test.com",
+        password: "123456"
+      }
+    });
+
+    res.json({
+      mensaje: "Usuario creado",
+      usuario
+    });
+
+  } catch (error) {
+    console.error(error);
+    res.json({
+      error: "Ya existe o fallo",
+      detalle: error.message
+    });
+  }
+});
