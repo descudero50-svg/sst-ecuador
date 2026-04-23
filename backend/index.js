@@ -10,49 +10,21 @@ app.use(cors());
 app.use(bodyParser.json());
 
 /* =========================
-   🔹 CREAR USUARIO AUTOMÁTICO
-========================= */
-async function crearUsuarioInicial() {
-  try {
-    const existe = await prisma.usuario.findUnique({
-      where: { email: "admin@test.com" },
-    });
-
-    if (!existe) {
-      await prisma.usuario.create({
-        data: {
-          email: "admin@test.com",
-          password: "123456",
-          rol: "admin",
-          empresaId: 1,
-        },
-      });
-
-      console.log("✅ Usuario admin creado");
-    } else {
-      console.log("✔ Usuario ya existe");
-    }
-  } catch (error) {
-    console.error("Error creando usuario:", error);
-  }
-}
-
-/* =========================
-   🔹 RUTA TEST
+   🔹 TEST
 ========================= */
 app.get("/", (req, res) => {
   res.send("API funcionando 🚀");
 });
 
 /* =========================
-   🔐 LOGIN
+   🔐 LOGIN (CREA USUARIO SI NO EXISTE)
 ========================= */
 app.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // 🔹 crear usuario automáticamente si no existe
-    await prisma.usuario.upsert({
+    // 🔥 CREA USUARIO AUTOMÁTICO (IMPORTANTE)
+    await prisma.Usuario.upsert({
       where: { email: "admin@test.com" },
       update: {},
       create: {
@@ -63,7 +35,7 @@ app.post("/login", async (req, res) => {
       },
     });
 
-    const user = await prisma.usuario.findUnique({
+    const user = await prisma.Usuario.findUnique({
       where: { email },
     });
 
@@ -86,33 +58,13 @@ app.post("/login", async (req, res) => {
 ========================= */
 app.get("/checklist", async (req, res) => {
   try {
-    const data = await prisma.checklist.findMany({
+    const data = await prisma.Checklist.findMany({
       include: { evidencias: true },
     });
 
     res.json(data);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Error obteniendo checklist" });
-  }
-});
-
-app.post("/checklist", async (req, res) => {
-  try {
-    const { pregunta } = req.body;
-
-    const nuevo = await prisma.checklist.create({
-      data: {
-        pregunta,
-        cumple: false,
-        empresaId: 1,
-      },
-    });
-
-    res.json(nuevo);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Error creando checklist" });
+    res.status(500).json({ error: "Error checklist" });
   }
 });
 
@@ -121,23 +73,6 @@ app.post("/checklist", async (req, res) => {
 ========================= */
 const PORT = process.env.PORT || 3000;
 
-app.listen(PORT, async () => {
+app.listen(PORT, () => {
   console.log("Servidor corriendo en puerto " + PORT);
-
-  try {
-    await prisma.usuario.upsert({
-      where: { email: "admin@test.com" },
-      update: {},
-      create: {
-        email: "admin@test.com",
-        password: "123456",
-        rol: "admin",
-        empresaId: 1,
-      },
-    });
-
-    console.log("✅ Usuario creado o ya existe");
-  } catch (error) {
-    console.error("Error creando usuario:", error);
-  }
 });
