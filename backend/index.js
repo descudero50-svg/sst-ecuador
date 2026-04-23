@@ -18,7 +18,7 @@ app.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    const usuario = await prisma.usuario.findUnique({
+    const usuario = await prisma.Usuario.findUnique({
       where: { email }
     });
 
@@ -45,7 +45,7 @@ app.post("/login", async (req, res) => {
 // CREAR ADMIN
 app.get("/crear-admin", async (req, res) => {
   try {
-    const existe = await prisma.usuario.findUnique({
+    const existe = await prisma.Usuario.findUnique({
       where: { email: "admin@test.com" }
     });
 
@@ -53,7 +53,7 @@ app.get("/crear-admin", async (req, res) => {
       return res.json({ mensaje: "Ya existe" });
     }
 
-    const usuario = await prisma.usuario.create({
+    const usuario = await prisma.Usuario.create({
       data: {
         email: "admin@test.com",
         password: "123456"
@@ -66,7 +66,7 @@ app.get("/crear-admin", async (req, res) => {
     });
 
   } catch (error) {
-    console.error(error);
+    console.error("ERROR CREAR ADMIN:", error);
     res.json({
       error: "Error creando usuario",
       detalle: error.message
