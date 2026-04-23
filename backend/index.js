@@ -1,189 +1,81 @@
 const express = require("express");
 const cors = require("cors");
-const bodyParser = require("body-parser");
 const { PrismaClient } = require("@prisma/client");
 
 const app = express();
 const prisma = new PrismaClient();
 
 app.use(cors());
-app.use(bodyParser.json());
+app.use(express.json());
 
-/* =========================
-   🔹 TEST
-========================= */
+// TEST
 app.get("/", (req, res) => {
   res.send("API funcionando 🚀");
 });
 
-/* =========================
-   🔐 LOGIN (CREA USUARIO SI NO EXISTE)
-========================= */
+// LOGIN
 app.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // 🔥 CREA USUARIO AUTOMÁTICO (IMPORTANTE)
-    await prisma.Usuario.upsert({
-      where: { email: "admin@test.com" },
-      update: {},
-      create: {
-        email: "admin@test.com",
-        password: "123456",
-        rol: "admin",
-        empresaId: 1,
-      },
+    const usuario = await prisma.usuario.findUnique({
+      where: { email }
     });
 
-    const user = await prisma.Usuario.findUnique({
-      where: { email },
-    });
-
-    if (!user || user.password !== password) {
-      return res.status(401).json({ error: "Credenciales incorrectas" });
+    if (!usuario || usuario.password !== password) {
+      return res.status(401).json({
+        error: "Credenciales incorrectas"
+      });
     }
 
     res.json({
-      token: "token-demo",
-      user,
-    });
-  } } catch (error) {
-  console.error("🔥 ERROR LOGIN:", error);
-  res.status(500).json({
-    error: "Error en login",
-    detalle: error.message
-  });
-}
-  }
-});
-
-/* =========================
-   📋 CHECKLIST
-========================= */
-app.get("/checklist", async (req, res) => {
-  try {
-    const data = await prisma.Checklist.findMany({
-      include: { evidencias: true },
+      mensaje: "Login correcto",
+      usuario
     });
 
-    res.json(data);
   } catch (error) {
-    res.status(500).json({ error: "Error checklist" });
+    console.error("ERROR LOGIN:", error);
+    res.status(500).json({
+      error: "Error en login",
+      detalle: error.message
+    });
   }
 });
 
-/* =========================
-   🚀 SERVIDOR
-========================= */
-const PORT = process.env.PORT || 3000;
+// CREAR ADMIN
+app.get("/crear-admin", async (req, res) => {
+  try {
+    const existe = await prisma.usuario.findUnique({
+      where: { email: "admin@test.com" }
+    });
+
+    if (existe) {
+      return res.json({ mensaje: "Ya existe" });
+    }
+
+    const usuario = await prisma.usuario.create({
+      data: {
+        email: "admin@test.com",
+        password: "123456"
+      }
+    });
+
+    res.json({
+      mensaje: "Usuario creado",
+      usuario
+    });
+
+  } catch (error) {
+    console.error(error);
+    res.json({
+      error: "Error creando usuario",
+      detalle: error.message
+    });
+  }
+});
+
+const PORT = process.env.PORT || 10000;
 
 app.listen(PORT, () => {
-  console.log("Servidor corriendo en puerto " + PORT);
-});
-app.get("/crear-admin", async (req, res) => {
-  try {
-    const usuario = await prisma.usuario.create({
-      data: {
-        email: "admin@test.com",
-        password: "123456"
-      }
-    });
-
-    res.json({
-      mensaje: "Usuario creado",
-      usuario
-    });
-
-  } catch (error) {
-    console.error(error);
-    res.json({
-      error: "Ya existe o fallo",
-      detalle: error.message
-    });
-  }
-});app.get("/crear-admin", async (req, res) => {
-  try {
-    const usuario = await prisma.usuario.create({
-      data: {
-        email: "admin@test.com",
-        password: "123456"
-      }
-    });
-
-    res.json({
-      mensaje: "Usuario creado",
-      usuario
-    });
-
-  } catch (error) {
-    console.error(error);
-    res.json({
-      error: "Ya existe o fallo",
-      detalle: error.message
-    });
-  }
-});app.get("/crear-admin", async (req, res) => {
-  try {
-    const usuario = await prisma.usuario.create({
-      data: {
-        email: "admin@test.com",
-        password: "123456"
-      }
-    });
-
-    res.json({
-      mensaje: "Usuario creado",
-      usuario
-    });
-
-  } catch (error) {
-    console.error(error);
-    res.json({
-      error: "Ya existe o fallo",
-      detalle: error.message
-    });
-  }
-});
-app.get("/crear-admin", async (req, res) => {
-  try {
-    const usuario = await prisma.usuario.create({
-      data: {
-        email: "admin@test.com",
-        password: "123456"
-      }
-    });
-
-    res.json({
-      mensaje: "Usuario creado",
-      usuario
-    });
-
-  } catch (error) {
-    console.error(error);
-    res.json({
-      error: "Ya existe o fallo",
-      detalle: error.message
-    });
-  }
-});app.get("/crear-admin", async (req, res) => {
-  try {
-    const usuario = await prisma.usuario.create({
-      data: {
-        email: "admin@test.com",
-        password: "123456"
-      }
-    });
-
-    res.json({
-      mensaje: "Usuario creado",
-      usuario
-    });
-
-  } catch (error) {
-    console.error(error);
-    res.json({
-      error: "Ya existe o fallo",
-      detalle: error.message
-    });
-  }
+  console.log("Servidor corriendo en puerto", PORT);
 });
