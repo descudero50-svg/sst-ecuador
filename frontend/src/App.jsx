@@ -1,25 +1,41 @@
 import { useState } from "react";
-import { login } from "./api";
 
 function App() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [msg, setMsg] = useState("");
+  const [mensaje, setMensaje] = useState("");
 
-  const handleLogin = async () => {
+  const login = async () => {
     try {
-      const res = await login(email, password);
-      console.log(res);
-      setMsg(JSON.stringify(res));
+      const res = await fetch("https://sst-ecuador.onrender.com/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          email,
+          password
+        })
+      });
+
+      const data = await res.json();
+
+      if (data.error) {
+        setMensaje(data.error);
+      } else {
+        setMensaje("✅ Login correcto");
+        console.log(data);
+      }
+
     } catch (error) {
+      setMensaje("❌ Error de conexión");
       console.error(error);
-      setMsg("Error al conectar");
     }
   };
 
   return (
-    <div style={{ padding: 20 }}>
-      <h2>Login SG-SST</h2>
+    <div style={{ textAlign: "center", marginTop: "50px" }}>
+      <h2>Iniciar sesión SG-SST</h2>
 
       <input
         placeholder="Correo"
@@ -36,9 +52,9 @@ function App() {
       />
       <br /><br />
 
-      <button onClick={handleLogin}>Ingresar</button>
+      <button onClick={login}>Ingresar</button>
 
-      <pre>{msg}</pre>
+      <p>{mensaje}</p>
     </div>
   );
 }
