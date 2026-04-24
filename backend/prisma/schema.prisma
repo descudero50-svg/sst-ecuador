@@ -7,22 +7,8 @@ datasource db {
   url      = "file:./dev.db"
 }
 
-model Checklist {
-  id        Int     @id @default(autoincrement())
-  pregunta  String
-  cumple    Boolean @default(false)
-  empresaId Int
-
-  evidencias Evidencia[]
-}
-
-model Evidencia {
-  id          Int    @id @default(autoincrement())
-  archivo     String
-  observacion String?
-
-  checklistId Int
-  checklist   Checklist @relation(fields: [checklistId], references: [id])
-
-  empresaId Int
+model Usuario {
+  id       Int    @id @default(autoincrement())
+  email    String @unique
+  password String
 }
